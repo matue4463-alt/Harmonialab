@@ -5,46 +5,21 @@
 <title>HarmoniaLab</title>
 <style>
 *{box-sizing:border-box}
-body{
-  background:#111;color:white;font-family:Arial;margin:0;text-align:center
-}
-.tela{
-  display:none;min-height:100vh;padding:20px;
-  flex-direction:column;align-items:center
-}
+body{background:#111;color:white;font-family:Arial;margin:0;text-align:center}
+.tela{display:none;min-height:100vh;padding:20px;flex-direction:column;align-items:center}
 .ativa{display:flex}
-button,select{
-  width:90%;max-width:400px;padding:14px;margin:8px 0;
-  font-size:16px;border:none;border-radius:10px;
-  background:#444;color:white
-}
-textarea{
-  width:90%;max-width:400px;height:140px;
-  border-radius:8px;padding:10px;font-size:14px
-}
+button,select{width:90%;max-width:400px;padding:14px;margin:8px 0;font-size:16px;border:none;border-radius:10px;background:#444;color:white}
+textarea{width:90%;max-width:400px;height:140px;border-radius:8px;padding:10px;font-size:14px}
 /* ===== PIANO ===== */
 .piano-container{display:flex;justify-content:center;align-items:flex-end;flex-wrap:nowrap;overflow-x:auto}
 .piano{position:relative;display:flex;height:180px;margin:10px auto;flex-shrink:0}
-.branca{
-  width:40px;height:180px;background:white;border:1px solid black;
-  color:black;display:flex;justify-content:flex-end;align-items:center;
-  flex-direction:column;font-weight:bold;margin-right:1px;position:relative;z-index:1;
-  flex-shrink:0
-}
-.preta{
-  width:28px;height:110px;background:black;color:white;font-size:12px;
-  position:absolute;z-index:2;display:flex;justify-content:center;align-items:flex-end
-}
+.branca{width:40px;height:180px;background:white;border:1px solid black;color:black;display:flex;justify-content:flex-end;align-items:center;flex-direction:column;font-weight:bold;margin-right:1px;position:relative;z-index:1;flex-shrink:0}
+.preta{width:28px;height:110px;background:black;color:white;font-size:12px;position:absolute;z-index:2;display:flex;justify-content:center;align-items:flex-end}
 /* ===== GUITARRA ===== */
-.corda{
-  background:#333;padding:12px;margin:6px 0;
-  width:90%;max-width:400px;
-  border-radius:8px;user-select:none
-}
+.corda{background:#333;padding:12px;margin:6px 0;width:90%;max-width:400px;border-radius:8px;user-select:none}
 .info{font-size:14px;opacity:.8}
 /* ===== VIDEO ===== */
 #ytVideo{width:90%;max-width:500px;height:180px;margin:10px auto;}
-/* ===== RODAPÉ ===== */
 footer{margin-top:20px;font-size:14px;opacity:.7}
 </style>
 </head>
@@ -168,122 +143,88 @@ E|------------------
 <footer>Créditos: Kauã_RD 2026</footer>
 
 <script>
-function abrir(t){
-  document.querySelectorAll('.tela').forEach(e=>e.classList.remove('ativa'));
-  document.getElementById(t).classList.add('ativa');
-  parar();
-}
+function abrir(t){document.querySelectorAll('.tela').forEach(e=>e.classList.remove('ativa'));document.getElementById(t).classList.add('ativa');parar();}
 function voltar(){abrir('menu');parar()}
 
 const ctx=new (window.AudioContext||window.webkitAudioContext)();
 let osc,gain;
 
 const notas={
-  C3:130.81,"C#3":138.59,D3:146.83,"D#3":155.56,
-  E3:164.81,F3:174.61,"F#3":185.00,
-  G3:196.00,"G#3":207.65,A3:220.00,"A#3":233.08,B3:246.94,
-  C4:261.63,"C#4":277.18,D4:293.66,"D#4":311.13,
-  E4:329.63,F4:349.23,"F#4":369.99,
-  G4:392,"G#4":415.3,A4:440,"A#4":466.16,B4:493.88,
-  C5:523.25,"C#5":554.37,D5:587.33,"D#5":622.25,
-  E5:659.25,F5:698.46,"F#5":739.99,
-  G5:783.99,"G#5":830.61,A5:880.00,"A#5":932.33,B5:987.77
+C3:130.81,"C#3":138.59,D3:146.83,"D#3":155.56,
+E3:164.81,F3:174.61,"F#3":185.00,
+G3:196.00,"G#3":207.65,A3:220.00,"A#3":233.08,B3:246.94,
+C4:261.63,"C#4":277.18,D4:293.66,"D#4":311.13,
+E4:329.63,F4:349.23,"F#4":369.99,
+G4:392,"G#4":415.3,A4:440,"A#4":466.16,B4:493.88,
+C5:523.25,"C#5":554.37,D5:587.33,"D#5":622.25,
+E5:659.25,F5:698.46,"F#5":739.99,
+G5:783.99,"G#5":830.61,A5:880.00,"A#5":932.33,B5:987.77
 };
 
 /* ===== PIANO ===== */
-function tocar(n, dur=400){
-  if(!notas[n]) return;
-  const o = ctx.createOscillator();
-  o.frequency.value = notas[n];
-  o.type = "sine";
-
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.4, ctx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur/1000);
-
-  o.connect(g);
-  g.connect(ctx.destination);
-  o.start();
-  o.stop(ctx.currentTime + dur/1000);
+function tocar(n,dur=400){
+if(!notas[n])return;
+const o=ctx.createOscillator();
+o.frequency.value=notas[n];
+o.type="sine";
+const g=ctx.createGain();
+g.gain.setValueAtTime(0.4,ctx.currentTime);
+g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur/1000);
+o.connect(g);g.connect(ctx.destination);
+o.start();o.stop(ctx.currentTime+dur/1000);
 }
 
-/* ===== GUITARRA / VIOLÃO ===== */
+/* ===== GUITARRA ===== */
 const afinacaoBase={E:329.63,B:246.94,G:196,D:146.83,A:110,E2:82.41};
 const afinacaoAtual={...afinacaoBase};
-
-function tocarCorda(c){
-  parar();
-  osc=ctx.createOscillator();
-  gain=ctx.createGain();
-  const filtro=ctx.createBiquadFilter();
-  osc.type="sawtooth";
-  osc.frequency.value=afinacaoAtual[c];
-  gain.gain.setValueAtTime(0.4,ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1);
-  filtro.type="lowpass"; filtro.frequency.value=2000;
-  osc.connect(filtro); filtro.connect(gain); gain.connect(ctx.destination);
-  osc.start();
-}
-
+function tocarCorda(c){parar();osc=ctx.createOscillator();gain=ctx.createGain();const filtro=ctx.createBiquadFilter();osc.type="sawtooth";osc.frequency.value=afinacaoAtual[c];gain.gain.setValueAtTime(0.4,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1);filtro.type="lowpass";filtro.frequency.value=2000;osc.connect(filtro);filtro.connect(gain);gain.connect(ctx.destination);osc.start();}
 function parar(){if(osc){osc.stop();osc=null}}
-function afinar(v){
-  const c=document.getElementById("cordaAfinar").value;
-  afinacaoAtual[c]=afinacaoBase[c]*Math.pow(2,v/1200);
-  document.getElementById("statusAfinacao").innerText="🎯 Ajustado";
-}
+function afinar(v){const c=document.getElementById("cordaAfinar").value;afinacaoAtual[c]=afinacaoBase[c]*Math.pow(2,v/1200);document.getElementById("statusAfinacao").innerText="🎯 Ajustado";}
 
 /* ===== TAB POR COLUNA ===== */
 function tocarTab(){
-  const linhas=document.getElementById("tab").value.split("\n");
-  const cordas=[];
-  linhas.forEach(l=>{
-    const i=l.indexOf("|");
-    if(i>0) cordas.push({c:l[0],seq:l.slice(i+1)});
-  });
-  let tempo=0;
-  const max=Math.max(...cordas.map(c=>c.seq.length));
-  for(let i=0;i<max;i++){
-    cordas.forEach(c=>{
-      const ch=c.seq[i];
-      if(/\d/.test(ch)){
-        let num=ch;
-        if(/\d/.test(c.seq[i+1])){num+=c.seq[i+1];}
-        setTimeout(()=>{
-          tocarCorda(c.c);
-          osc.frequency.value=afinacaoAtual[c.c]*Math.pow(2,parseInt(num)/12);
-          setTimeout(parar,300);
-        },tempo);
-      }
-    });
-    tempo+=350;
-  }
+const linhas=document.getElementById("tab").value.split("\n");
+const cordas=[];
+linhas.forEach(l=>{const i=l.indexOf("|");if(i>0)cordas.push({c:l[0],seq:l.slice(i+1)});});
+let tempo=0;
+const max=Math.max(...cordas.map(c=>c.seq.length));
+for(let i=0;i<max;i++){
+cordas.forEach(c=>{
+const ch=c.seq[i];
+if(/\d/.test(ch)){
+let num=ch;
+if(/\d/.test(c.seq[i+1])){num+=c.seq[i+1];}
+setTimeout(()=>{tocarCorda(c.c);osc.frequency.value=afinacaoAtual[c.c]*Math.pow(2,parseInt(num)/12);setTimeout(parar,300);},tempo);
+}
+});
+tempo+=350;
+}
 }
 
-/* ===== LEITOR COLADO COM HOLD JUNTO ===== */
+/* ===== LEITOR COLADO COM HOLD E PAUSE ===== */
 function tocarColado(){
-  const partes = document.getElementById("entrada").value.trim().split(/\s+/);
-  let tempo = 0;
-  let speedMod = 1;
+const partes=document.getElementById("entrada").value.trim().split(/\s+/);
+let tempo=0;
+let speedMod=1;
+partes.forEach(p=>{
+  const speedMatch=p.match(/^speed\(([-+]?\d+)%\)$/i);
+  if(speedMatch){ speedMod=1+parseInt(speedMatch[1])/100; return; }
 
-  partes.forEach(p => {
-    const speedMatch = p.match(/^speed\(([-+]?\d+)%\)$/i);
-    if(speedMatch){ speedMod = 1 + parseInt(speedMatch[1])/100; return; }
+  const holdMatch=p.match(/^([A-G]#?\d)hold\((\d+(\.\d+)?)\)$/i);
+  if(holdMatch){
+    const nota=holdMatch[1];
+    const dur=parseFloat(holdMatch[2])*1000/speedMod;
+    setTimeout(()=>tocar(nota,dur),tempo);
+    tempo+=dur;
+    return;
+  }
 
-    const holdMatch = p.match(/^([A-G]#?\d)hold\((\d+(\.\d+)?)\)$/i);
-    if(holdMatch){
-      const nota = holdMatch[1];
-      const dur = parseFloat(holdMatch[2])*1000 / speedMod;
-      setTimeout(() => tocar(nota, dur), tempo);
-      tempo += dur;
-      return;
-    }
+  const pauseMatch=p.match(/^pause\((\d+(\.\d+)?)\)$/i);
+  if(pauseMatch){ tempo+=parseFloat(pauseMatch[1])*1000/speedMod; return; }
 
-    if(notas[p]){
-      setTimeout(() => tocar(p, 400), tempo);
-      tempo += 400 / speedMod;
-    }
-  });
+  if(notas[p]){ setTimeout(()=>tocar(p,400/speedMod),tempo); tempo+=400/speedMod; }
+});
 }
 </script>
 </body>
-    </html>
+</html>
