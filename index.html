@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>HarmoniaLab</title>
-
 <style>
 *{box-sizing:border-box}
 body{
@@ -23,7 +22,6 @@ textarea{
   width:90%;max-width:400px;height:140px;
   border-radius:8px;padding:10px;font-size:14px
 }
-
 /* ===== PIANO ===== */
 .piano-container{display:flex;justify-content:center;align-items:flex-end;flex-wrap:nowrap;overflow-x:auto}
 .piano{position:relative;display:flex;height:180px;margin:10px auto;flex-shrink:0}
@@ -37,7 +35,6 @@ textarea{
   width:28px;height:110px;background:black;color:white;font-size:12px;
   position:absolute;z-index:2;display:flex;justify-content:center;align-items:flex-end
 }
-
 /* ===== GUITARRA ===== */
 .corda{
   background:#333;padding:12px;margin:6px 0;
@@ -45,17 +42,13 @@ textarea{
   border-radius:8px;user-select:none
 }
 .info{font-size:14px;opacity:.8}
-
 /* ===== VIDEO ===== */
 #ytVideo{width:90%;max-width:500px;height:180px;margin:10px auto;}
-
 /* ===== RODAPÉ ===== */
 footer{margin-top:20px;font-size:14px;opacity:.7}
 </style>
 </head>
-
 <body>
-
 <h1>🎵 HarmoniaLab</h1>
 
 <div id="menu" class="tela ativa">
@@ -166,7 +159,7 @@ E|------------------
 <!-- COLAR -->
 <div id="colar" class="tela">
   <h2>📋 Cole sua nota musical</h2>
-  <p class="info">Exemplo apagado: pause(1), hold(0.2), speed(10%)</p>
+  <p class="info">Exemplo: C5hold(0.5) D4 E4 hold(1) pause(0.3) speed(120%)</p>
   <textarea id="entrada"></textarea>
   <button onclick="tocarColado()">▶️ Tocar automaticamente</button>
   <button onclick="voltar()">⬅ Voltar</button>
@@ -198,14 +191,20 @@ const notas={
 };
 
 /* ===== PIANO ===== */
-function tocar(n){
-  if(!notas[n])return;
-  const o=ctx.createOscillator();
-  o.frequency.value=notas[n];
-  o.type="sine";
-  o.connect(ctx.destination);
+function tocar(n, dur=400){
+  if(!notas[n]) return;
+  const o = ctx.createOscillator();
+  o.frequency.value = notas[n];
+  o.type = "sine";
+
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.4, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur/1000);
+
+  o.connect(g);
+  g.connect(ctx.destination);
   o.start();
-  setTimeout(()=>o.stop(),400);
+  o.stop(ctx.currentTime + dur/1000);
 }
 
 /* ===== GUITARRA / VIOLÃO ===== */
@@ -227,8 +226,6 @@ function tocarCorda(c){
 }
 
 function parar(){if(osc){osc.stop();osc=null}}
-
-/* ===== AFINADOR ===== */
 function afinar(v){
   const c=document.getElementById("cordaAfinar").value;
   afinacaoAtual[c]=afinacaoBase[c]*Math.pow(2,v/1200);
@@ -262,32 +259,31 @@ function tocarTab(){
   }
 }
 
-/* ===== LEITOR COLADO ===== */
+/* ===== LEITOR COLADO COM HOLD JUNTO ===== */
 function tocarColado(){
-  const partes=document.getElementById("entrada").value.trim().split(/\s+/);
-  let tempo=0;
-  let speedMod=1;
-  partes.forEach(p=>{
-    const pauseMatch=p.match(/^pause\((\d+(\.\d+)?)\)$/i);
-    const holdMatch=p.match(/^hold\((\d+(\.\d+)?)\)$/i);
-    const speedMatch=p.match(/^speed\(([-+]?\d+)%\)$/i);
-    if(pauseMatch) tempo+=Math.min(pauseMatch[1]*1000,10000)/speedMod;
-    else if(holdMatch){
-      const dur=holdMatch[1]*1000/speedMod;
-      const nota=partes[partes.indexOf(p)-1];
-      setTimeout(()=>tocar(nota),tempo);
-      tempo+=dur;
+  const partes = document.getElementById("entrada").value.trim().split(/\s+/);
+  let tempo = 0;
+  let speedMod = 1;
+
+  partes.forEach(p => {
+    const speedMatch = p.match(/^speed\(([-+]?\d+)%\)$/i);
+    if(speedMatch){ speedMod = 1 + parseInt(speedMatch[1])/100; return; }
+
+    const holdMatch = p.match(/^([A-G]#?\d)hold\((\d+(\.\d+)?)\)$/i);
+    if(holdMatch){
+      const nota = holdMatch[1];
+      const dur = parseFloat(holdMatch[2])*1000 / speedMod;
+      setTimeout(() => tocar(nota, dur), tempo);
+      tempo += dur;
+      return;
     }
-    else if(speedMatch){
-      speedMod=1+parseInt(speedMatch[1])/100;
-    }
-    else if(notas[p]){
-      setTimeout(()=>tocar(p),tempo);
-      tempo+=500/speedMod;
+
+    if(notas[p]){
+      setTimeout(() => tocar(p, 400), tempo);
+      tempo += 400 / speedMod;
     }
   });
 }
 </script>
-
 </body>
-        </html>
+    </html>
