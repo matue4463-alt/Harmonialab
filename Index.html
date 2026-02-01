@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>HarmoniaLab</title>
+
+<style>
+*{box-sizing:border-box}
+body{background:#111;color:white;font-family:Arial;margin:0;text-align:center}
+
+.tela{display:none;min-height:100vh;padding:20px;flex-direction:column;align-items:center}
+.ativa{display:flex}
+
+button,select{
+  width:90%;
+  max-width:400px;
+  padding:14px;
+  margin:8px 0;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
+  background:#444;
+  color:white;
+  cursor:pointer
+}
+
+textarea{
+  width:90%;
+  max-width:400px;
+  height:140px;
+  border-radius:8px;
+  padding:10px;
+  font-size:14px
+}
+
+/* ===== PIANO ===== */
+.piano-container{
+  overflow-x:auto;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.piano{
+  position:relative;
+  display:flex;
+  height:180px;
+}
+
+.branca{
+  width:40px;
+  height:180px;
+  background:white;
+  border:1px solid black;
+  color:black;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  flex-direction:column;
+  font-weight:bold;
+  position:relative;
+  z-index:1;
+}
+
+.preta{
+  width:28px;
+  height:110px;
+  background:black;
+  color:white;
+  position:absolute;
+  z-index:2;
+  font-size:12px;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  flex-direction:column;
+}
+
+/* ===== GUITARRA ===== */
+.corda{
+  background:#333;
+  padding:12px;
+  margin:6px 0;
+  width:90%;
+  max-width:400px;
+  border-radius:8px
+}
+
+.info{font-size:14px;opacity:.8}
+footer{margin:20px;opacity:.7}
+</style>
+</head>
+
+<body>
+
+<h1>🎵 HarmoniaLab</h1>
+
+<div id="menu" class="tela ativa">
+  <button onclick="abrir('piano')">🎹 Piano</button>
+  <button onclick="abrir('guitarra')">🎸 Guitarra</button>
+  <button onclick="abrir('colar')">📋 Colar notas</button>
+</div>
+
+<div id="piano" class="tela">
+<h2>🎹 Piano</h2>
+
+<div class="piano-container">
+<div class="piano">
+<div class="branca" onclick="tocar('C3')">C3</div>
+<div class="preta" style="left:30px" onclick="tocar('C#3')">C#</div>
+<div class="branca" onclick="tocar('D3')">D3</div>
+<div class="preta" style="left:70px" onclick="tocar('D#3')">D#</div>
+<div class="branca" onclick="tocar('E3')">E3</div>
+<div class="branca" onclick="tocar('F3')">F3</div>
+<div class="preta" style="left:150px" onclick="tocar('F#3')">F#</div>
+<div class="branca" onclick="tocar('G3')">G3</div>
+<div class="preta" style="left:190px" onclick="tocar('G#3')">G#</div>
+<div class="branca" onclick="tocar('A3')">A3</div>
+<div class="preta" style="left:230px" onclick="tocar('A#3')">A#</div>
+<div class="branca" onclick="tocar('B3')">B3</div>
+<div class="branca" onclick="tocar('C4')">C4</div>
+<div class="preta" style="left:310px" onclick="tocar('C#4')">C#</div>
+<div class="branca" onclick="tocar('D4')">D4</div>
+<div class="preta" style="left:350px" onclick="tocar('D#4')">D#</div>
+<div class="branca" onclick="tocar('E4')">E4</div>
+<div class="branca" onclick="tocar('F4')">F4</div>
+<div class="preta" style="left:430px" onclick="tocar('F#4')">F#</div>
+<div class="branca" onclick="tocar('G4')">G4</div>
+<div class="preta" style="left:470px" onclick="tocar('G#4')">G#</div>
+<div class="branca" onclick="tocar('A4')">A4</div>
+<div class="preta" style="left:510px" onclick="tocar('A#4')">A#</div>
+<div class="branca" onclick="tocar('B4')">B4</div>
+<div class="branca" onclick="tocar('C5')">C5</div>
+<div class="preta" style="left:590px" onclick="tocar('C#5')">C#</div>
+<div class="branca" onclick="tocar('D5')">D5</div>
+<div class="preta" style="left:630px" onclick="tocar('D#5')">D#</div>
+<div class="branca" onclick="tocar('E5')">E5</div>
+<div class="branca" onclick="tocar('F5')">F5</div>
+<div class="preta" style="left:710px" onclick="tocar('F#5')">F#</div>
+<div class="branca" onclick="tocar('G5')">G5</div>
+<div class="preta" style="left:750px" onclick="tocar('G#5')">G#</div>
+<div class="branca" onclick="tocar('A5')">A5</div>
+<div class="preta" style="left:790px" onclick="tocar('A#5')">A#</div>
+<div class="branca" onclick="tocar('B5')">B5</div>
+</div>
+</div>
+
+<button onclick="voltar()">⬅ Voltar</button>
+</div>
+
+<div id="colar" class="tela">
+<h2>📋 Colar notas</h2>
+<p class="info">Ex: speed(80%) {A3 E4 A4} pause(0.3) speed(120%) E5 D#5 E5</p>
+<textarea id="entrada"></textarea>
+<button onclick="tocarColado()">▶️ Tocar</button>
+<button onclick="voltar()">⬅ Voltar</button>
+</div>
+
+<div id="guitarra" class="tela">
+<h2>🎸 Guitarra</h2>
+<div class="corda" onclick="tocar('E4')">E</div>
+<div class="corda" onclick="tocar('B3')">B</div>
+<div class="corda" onclick="tocar('G3')">G</div>
+<div class="corda" onclick="tocar('D3')">D</div>
+<div class="corda" onclick="tocar('A2')">A</div>
+<div class="corda" onclick="tocar('E2')">E grave</div>
+<button onclick="voltar()">⬅ Voltar</button>
+</div>
+
+<footer>Kauã_RD © 2026</footer>
+
+<script>
+function abrir(t){
+  document.querySelectorAll('.tela').forEach(e=>e.classList.remove('ativa'));
+  document.getElementById(t).classList.add('ativa');
+}
+function voltar(){abrir('menu')}
+
+const ctx=new (window.AudioContext||window.webkitAudioContext)();
+
+const notas={
+C3:130.81,"C#3":138.59,D3:146.83,"D#3":155.56,E3:164.81,F3:174.61,"F#3":185,
+G3:196,"G#3":207.65,A3:220,"A#3":233.08,B3:246.94,
+C4:261.63,"C#4":277.18,D4:293.66,"D#4":311.13,E4:329.63,F4:349.23,"F#4":369.99,
+G4:392,"G#4":415.3,A4:440,"A#4":466.16,B4:493.88,
+C5:523.25,"C#5":554.37,D5:587.33,"D#5":622.25,E5:659.25,F5:698.46,"F#5":739.99,
+G5:783.99,"G#5":830.61,A5:880,"A#5":932.33,B5:987.77,
+A2:110,E2:82.41
+};
+
+function tocar(nota,dur=400){
+  if(!notas[nota])return;
+  const o=ctx.createOscillator();
+  const g=ctx.createGain();
+  o.frequency.value=notas[nota];
+  o.type="sine";
+  g.gain.setValueAtTime(0.4,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur/1000);
+  o.connect(g);g.connect(ctx.destination);
+  o.start();o.stop(ctx.currentTime+dur/1000);
+}
+
+function tocarAcorde(arr,dur){
+  arr.forEach(n=>tocar(n,dur));
+}
+
+/* ===== PARSER COM SPEED ===== */
+function tocarColado(){
+  const txt=document.getElementById("entrada").value.trim();
+  if(!txt) return;
+
+  const tokens = txt.match(
+    /speed\(\d+%\)|\{[A-G#0-9\s]+\}(?:hold\(\d+(\.\d+)?\))?|[A-G]#?\d(?:hold\(\d+(\.\d+)?\))?|pause\(\d+(\.\d+)?\)/gi
+  );
+
+  let tempo=0;
+  let speed=1;
+  const base=400;
+
+  tokens.forEach(t=>{
+    const sp=t.match(/^speed\((\d+)%\)$/i);
+    if(sp){speed=parseInt(sp[1])/100;return;}
+
+    const pause=t.match(/^pause\((\d+(\.\d+)?)\)$/i);
+    if(pause){tempo+=parseFloat(pause[1])*1000/speed;return;}
+
+    const acorde=t.match(/^\{([A-G#0-9\s]+)\}(?:hold\((\d+(\.\d+)?)\))?$/i);
+    if(acorde){
+      const arr=acorde[1].trim().split(/\s+/);
+      const dur=(acorde[2]?parseFloat(acorde[2])*1000:base)/speed;
+      setTimeout(()=>tocarAcorde(arr,dur),tempo);
+      tempo+=dur;return;
+    }
+
+    const hold=t.match(/^([A-G]#?\d)hold\((\d+(\.\d+)?)\)$/i);
+    if(hold){
+      const dur=parseFloat(hold[2])*1000/speed;
+      setTimeout(()=>tocar(hold[1],dur),tempo);
+      tempo+=dur;return;
+    }
+
+    if(notas[t]){
+      const dur=base/speed;
+      setTimeout(()=>tocar(t,dur),tempo);
+      tempo+=dur;
+    }
+  });
+}
+</script>
+
+</body>
+  </html>
